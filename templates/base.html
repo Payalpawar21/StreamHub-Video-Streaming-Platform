@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}StreamHub{% endblock %}</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    
+<nav class="navbar">
+    <a href="{{ url_for('index') }}" class="brand">
+        StreamHub
+    </a>
+
+    <div class="nav-links">
+        <a href="{{ url_for('index') }}">Home</a>
+
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+
+            {% set admin_email = config.get("ADMIN_EMAIL", "")|lower %}
+
+            {% if admin_email and current_user.email|lower == admin_email %}
+                <a href="{{ url_for('admin_dashboard') }}" class="btn">
+                    Admin Dashboard
+                </a>
+            {% endif %}
+
+            <form action="{{ url_for('logout') }}"
+                  method="POST"
+                  style="display: inline; margin: 0;">
+                <input type="hidden" name="csrf_token"
+                       value="{{ csrf_token() }}">
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}" class="btn">
+                Get Started
+            </a>
+        {% endif %}
+    </div>
+</nav>
+
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>

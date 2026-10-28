@@ -1,0 +1,144 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Dashboard | StreamHub{% endblock %}
+
+{% block content %}
+
+<section class="studio-header">
+    <div class="studio-header-content">
+        <span class="studio-eyebrow">STREAMHUB STUDIO</span>
+        <h1>Welcome back, {{ current_user.username }}!</h1>
+        <p>Manage your videos and grow your personal video library.</p>
+
+        <div class="studio-header-actions">
+            <a href="{{ url_for('upload_video') }}" class="btn studio-primary-btn">
+                <span>＋</span> Upload Video
+            </a>
+            <a href="{{ url_for('index') }}" class="btn studio-secondary-btn">
+                Browse Videos
+            </a>
+        </div>
+    </div>
+
+    <div class="studio-header-icon">▶</div>
+</section>
+
+<section class="studio-stats">
+    <article class="studio-stat-card">
+        <div class="studio-stat-icon">▣</div>
+        <div>
+            <p>Total Videos</p>
+            <h2>{{ videos|length }}</h2>
+            <span>Your uploaded library</span>
+        </div>
+    </article>
+
+    <article class="studio-stat-card">
+        <div class="studio-stat-icon">●</div>
+        <div>
+            <p>Account Status</p>
+            <h2 class="studio-active-status">Active</h2>
+            <span>Welcome to StreamHub</span>
+        </div>
+    </article>
+</section>
+
+<section class="studio-library">
+    <div class="studio-section-heading">
+        <div>
+            <span class="studio-eyebrow">YOUR CONTENT</span>
+            <h2>My Videos</h2>
+            <p>Manage, watch, edit, or remove your uploaded videos.</p>
+        </div>
+
+        <span class="studio-count">
+            {{ videos|length }} video{% if videos|length != 1 %}s{% endif %}
+        </span>
+    </div>
+
+    {% if videos %}
+        <div class="studio-video-grid">
+            {% for video in videos %}
+                <article class="studio-video-card">
+
+                    <a
+                        href="{{ url_for('watch_video', video_id=video.id) }}"
+                        class="studio-thumbnail-link"
+                    >
+                        {% if video.thumbnail %}
+                            <img
+                                src="{{ url_for('static', filename='thumbnails/' ~ video.thumbnail) }}"
+                                alt="{{ video.title }} thumbnail"
+                                class="studio-thumbnail"
+                                loading="lazy"
+                            >
+                        {% else %}
+                            <div class="studio-thumbnail studio-no-thumbnail">
+                                <span>▶</span>
+                                <small>Thumbnail unavailable</small>
+                            </div>
+                        {% endif %}
+
+                        <span class="studio-play-overlay">▶</span>
+                    </a>
+
+                    <div class="studio-video-info">
+                        <h3 title="{{ video.title }}">{{ video.title }}</h3>
+
+                        <p class="studio-video-description">
+                            {{ video.description or 'No description added yet.' }}
+                        </p>
+
+                        <p class="studio-upload-date">
+                            Uploaded {{ video.created_at }}
+                        </p>
+
+                        <div class="studio-video-actions">
+                            <a
+                                href="{{ url_for('watch_video', video_id=video.id) }}"
+                                class="btn studio-watch-btn"
+                            >
+                                ▶ Watch
+                            </a>
+
+                            <a
+                                href="{{ url_for('edit_video', video_id=video.id) }}"
+                                class="btn studio-edit-btn"
+                            >
+                                Edit
+                            </a>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('delete_video', video_id=video.id) }}"
+                                onsubmit="return confirm('Are you sure you want to permanently delete this video?');"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="{{ csrf_token() }}"
+                                >
+                                <button type="submit" class="btn studio-delete-btn">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="studio-empty-state">
+            <div class="studio-empty-icon">▶</div>
+            <h3>Your video library is empty</h3>
+            <p>Upload your first video to start building your StreamHub library.</p>
+            <a href="{{ url_for('upload_video') }}" class="btn studio-primary-btn">
+                ＋ Upload Your First Video
+            </a>
+        </div>
+    {% endif %}
+</section>
+
+{% endblock %}

@@ -1,0 +1,166 @@
+
+{% extends "base.html" %}
+
+{% block title %}Home | StreamHub{% endblock %}
+
+{% block content %}
+
+<section class="stream-hero">
+    <p class="hero-eyebrow">WELCOME TO STREAMHUB</p>
+
+    <h1>Discover. Watch. Enjoy.</h1>
+
+    <p class="hero-description">
+        Explore videos, discover new content, and enjoy your own
+        personal streaming experience.
+    </p>
+
+    <div class="hero-actions">
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard') }}" class="btn">
+                Go to Dashboard
+            </a>
+            <a href="{{ url_for('upload_video') }}" class="btn btn-secondary">
+                + Upload Video
+            </a>
+        {% else %}
+            <a href="{{ url_for('register') }}" class="btn">
+                Create Account
+            </a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">
+                Login
+            </a>
+        {% endif %}
+    </div>
+</section>
+
+<form method="GET" action="{{ url_for('index') }}" class="stream-search-form">
+    <input
+        type="search"
+        name="q"
+        placeholder="Search videos..."
+        value="{{ search_query }}"
+        aria-label="Search videos"
+    >
+
+    <select name="scope" aria-label="Filter videos">
+        <option value="all" {% if scope == 'all' %}selected{% endif %}>
+            All Videos
+        </option>
+
+        {% if current_user.is_authenticated %}
+            <option value="mine" {% if scope == 'mine' %}selected{% endif %}>
+                My Videos
+            </option>
+        {% endif %}
+    </select>
+
+    <select name="sort" aria-label="Sort videos">
+        <option value="newest" {% if sort == 'newest' %}selected{% endif %}>
+            Newest First
+        </option>
+        <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>
+            Oldest First
+        </option>
+    </select>
+
+    <button type="submit" class="btn">Search</button>
+
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+        Reset
+    </a>
+</form>
+
+<section class="stream-section">
+    <div class="stream-section-heading">
+        <div>
+            <h2>
+                {% if search_query %}
+                    Search Results
+                {% elif scope == 'mine' %}
+                    My Videos
+                {% else %}
+                    Latest Videos
+                {% endif %}
+            </h2>
+            <p class="muted">Explore videos on StreamHub</p>
+        </div>
+
+        <span class="video-count">
+            {{ videos|length }} video{% if videos|length != 1 %}s{% endif %}
+        </span>
+    </div>
+
+    {% if videos %}
+        <div class="stream-video-grid">
+            {% for video in videos %}
+                <article class="stream-video-card">
+                    <a
+                        class="stream-thumbnail-link"
+                        href="{{ url_for('watch_video', video_id=video.id) }}"
+                        aria-label="Watch {{ video.title }}"
+                    >
+                        {% if video.thumbnail %}
+                            <img
+                                class="stream-thumbnail"
+                                src="{{ url_for('static', filename='thumbnails/' ~ video.thumbnail) }}"
+                                alt="{{ video.title }} thumbnail"
+                                loading="lazy"
+                            >
+                        {% else %}
+                            <div class="stream-thumbnail stream-thumbnail-placeholder">
+                                <span>▶</span>
+                                <span>Thumbnail unavailable</span>
+                            </div>
+                        {% endif %}
+
+                        <span class="thumbnail-play">▶</span>
+                    </a>
+
+                    <div class="stream-video-details">
+                        <h3>
+                            <a href="{{ url_for('watch_video', video_id=video.id) }}">
+                                {{ video.title }}
+                            </a>
+                        </h3>
+
+                        <p class="stream-video-description">
+                            {{ (video.description or 'No description available.')|truncate(120) }}
+                        </p>
+
+                        <p class="stream-video-date">
+                            Uploaded {{ video.created_at }}
+                        </p>
+
+                        <a
+                            href="{{ url_for('watch_video', video_id=video.id) }}"
+                            class="btn stream-watch-button"
+                        >
+                            ▶ Watch Video
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="stream-empty-state">
+            <div class="empty-icon">▶</div>
+            <h3>No videos found</h3>
+            <p class="muted">
+                Try another search or upload your first video.
+            </p>
+
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('upload_video') }}" class="btn">
+                    + Upload Your First Video
+                </a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="btn">
+                    Get Started
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+
+{% endblock %}

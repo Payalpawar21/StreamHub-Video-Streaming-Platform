@@ -1,0 +1,218 @@
+
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | StreamHub{% endblock %}
+
+{% block content %}
+
+<section class="admin-hero">
+    <div class="admin-hero-content">
+        <span class="admin-eyebrow">STREAMHUB CONTROL CENTER</span>
+        <h1>Admin Dashboard</h1>
+        <p>Manage your community, monitor video uploads and oversee your platform.</p>
+
+        <div class="admin-hero-actions">
+            <a href="{{ url_for('index') }}" class="admin-btn admin-btn-primary">
+                ▶ Browse StreamHub
+            </a>
+        </div>
+    </div>
+
+    <div class="admin-hero-icon">⚙</div>
+</section>
+
+<!-- Analytics -->
+<section class="admin-stats-grid">
+
+    <article class="admin-stat-card">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon users-icon">♙</span>
+            <span class="admin-stat-label">COMMUNITY</span>
+        </div>
+        <p>Total Registered Users</p>
+        <h2>{{ total_users }}</h2>
+        <span class="admin-stat-foot">Registered accounts</span>
+    </article>
+
+    <article class="admin-stat-card">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon videos-icon">▶</span>
+            <span class="admin-stat-label">CONTENT</span>
+        </div>
+        <p>Total Uploaded Videos</p>
+        <h2>{{ total_videos }}</h2>
+        <span class="admin-stat-foot">Videos on StreamHub</span>
+    </article>
+
+    <article class="admin-stat-card">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon status-icon">✓</span>
+            <span class="admin-stat-label">PLATFORM</span>
+        </div>
+        <p>Platform Status</p>
+        <h2 class="admin-status-active">Active</h2>
+        <span class="admin-stat-foot">Administration overview</span>
+    </article>
+
+</section>
+
+<!-- Registered Users -->
+<section class="admin-panel">
+
+    <div class="admin-panel-heading">
+        <div>
+            <span class="admin-eyebrow">COMMUNITY MANAGEMENT</span>
+            <h2>Registered Users</h2>
+            <p>Review accounts registered on your platform.</p>
+        </div>
+
+        <span class="admin-count">{{ total_users }} users</span>
+    </div>
+
+    {% if users %}
+    <div class="admin-table-wrapper">
+        <table class="admin-users-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>USER</th>
+                    <th>EMAIL ADDRESS</th>
+                    <th>ROLE</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td><span class="admin-user-id">#{{ user.id }}</span></td>
+
+                    <td>
+                        <div class="admin-user-cell">
+                            <div class="admin-avatar">
+                                {{ user.username[:1]|upper }}
+                            </div>
+                            <strong>{{ user.username }}</strong>
+                        </div>
+                    </td>
+
+                    <td class="admin-email-cell">{{ user.email }}</td>
+
+                    <td>
+                        {% if user.email|lower == config["ADMIN_EMAIL"]|lower %}
+                            <span class="admin-role admin-role-admin">★ Admin</span>
+                        {% else %}
+                            <span class="admin-role admin-role-user">User</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="admin-empty-state">
+        <span>♙</span>
+        <h3>No registered users yet</h3>
+        <p>New accounts will appear here.</p>
+    </div>
+    {% endif %}
+
+</section>
+
+<!-- Recent Videos -->
+<section class="admin-panel admin-recent-panel">
+
+    <div class="admin-panel-heading">
+        <div>
+            <span class="admin-eyebrow">CONTENT OVERVIEW</span>
+            <h2>Recently Uploaded Videos</h2>
+            <p>Explore the latest videos uploaded by your community.</p>
+        </div>
+
+        <span class="admin-count">{{ recent_videos|length }} recent</span>
+    </div>
+
+    {% if recent_videos %}
+    <div class="admin-recent-grid">
+
+        {% for video in recent_videos %}
+        <article class="admin-video-card">
+
+            <a
+                href="{{ url_for('watch_video', video_id=video.id) }}"
+                class="admin-video-thumbnail-link"
+            >
+                {% if video.thumbnail %}
+                <img
+                    src="{{ url_for('static', filename='thumbnails/' ~ video.thumbnail) }}"
+                    alt="{{ video.title }} thumbnail"
+                    class="admin-video-thumbnail"
+                    loading="lazy"
+                >
+                {% else %}
+                <div class="admin-video-placeholder">
+                    <span>▶</span>
+                    <small>No thumbnail available</small>
+                </div>
+                {% endif %}
+
+                <span class="admin-video-play">▶</span>
+            </a>
+
+            <div class="admin-video-content">
+                <h3>{{ video.title }}</h3>
+
+                <p class="admin-video-description">
+                    {{ video.description or 'No description provided.' }}
+                </p>
+
+                <div class="admin-uploader">
+                    <div class="admin-avatar admin-avatar-small">
+                        {% if video.owner %}
+                            {{ video.owner.username[:1]|upper }}
+                        {% else %}
+                            ?
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <span class="admin-uploader-label">UPLOADED BY</span>
+                        <strong>
+                            {% if video.owner %}
+                                {{ video.owner.username }}
+                            {% else %}
+                                Unknown user
+                            {% endif %}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="admin-video-footer">
+                    <span class="admin-video-date">
+                        {{ video.created_at }}
+                    </span>
+
+                    <a
+                        href="{{ url_for('watch_video', video_id=video.id) }}"
+                        class="admin-watch-link"
+                    >
+                        Watch ↗
+                    </a>
+                </div>
+            </div>
+
+        </article>
+        {% endfor %}
+
+    </div>
+    {% else %}
+    <div class="admin-empty-state">
+        <span>▶</span>
+        <h3>No videos uploaded yet</h3>
+        <p>Uploaded videos will appear in this section.</p>
+    </div>
+    {% endif %}
+
+</section>
+
+{% endblock %}

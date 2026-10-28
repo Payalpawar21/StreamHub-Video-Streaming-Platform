@@ -1,0 +1,130 @@
+
+{% extends "base.html" %}
+
+{% block title %}Upload Video | StreamHub{% endblock %}
+
+{% block content %}
+
+<section class="upload-page">
+
+    <div class="upload-page-heading">
+        <span class="upload-eyebrow">STREAMHUB STUDIO</span>
+        <h1>Upload your video</h1>
+        <p>Share your videos with the StreamHub community.</p>
+    </div>
+
+    <div class="upload-card">
+
+        <div class="upload-card-header">
+            <div class="upload-icon">↑</div>
+            <div>
+                <h2>Create a new upload</h2>
+                <p>Add your video details below.</p>
+            </div>
+        </div>
+
+        <form
+            method="POST"
+            action="{{ url_for('upload_video') }}"
+            enctype="multipart/form-data"
+            class="stream-upload-form"
+        >
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <div class="upload-field">
+                <label for="title">Video title <span>*</span></label>
+                <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    maxlength="150"
+                    placeholder="Give your video an engaging title"
+                    required
+                >
+                <small>Choose a clear and descriptive title.</small>
+            </div>
+
+            <div class="upload-field">
+                <label for="description">Description</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="5"
+                    maxlength="5000"
+                    placeholder="What is your video about?"
+                ></textarea>
+                <small>Tell viewers what they can expect from your video.</small>
+            </div>
+
+            <div class="upload-field">
+                <label for="video">Select video file <span>*</span></label>
+
+                <label for="video" class="upload-dropzone">
+                    <span class="upload-dropzone-icon">⇧</span>
+                    <strong>Choose a video from your computer</strong>
+                    <span class="upload-file-hint">
+                        MP4, WebM, OGG or MOV · Maximum 100 MB
+                    </span>
+                    <span class="upload-select-button">Browse files</span>
+                </label>
+
+                <input
+                    id="video"
+                    name="video"
+                    type="file"
+                    accept=".mp4,.webm,.ogg,.mov"
+                    required
+                    class="upload-file-input"
+                >
+
+                <p id="selected-video-name" class="selected-video-name">
+                    No video selected
+                </p>
+            </div>
+
+            <div class="upload-notice">
+                <span>ⓘ</span>
+                <p>
+                    Make sure your video is in a supported format and is no
+                    larger than 100 MB.
+                </p>
+            </div>
+
+            <div class="upload-form-actions">
+                <a href="{{ url_for('dashboard') }}" class="upload-cancel-btn">
+                    Cancel
+                </a>
+
+                <button type="submit" class="upload-submit-btn">
+                    ↑ Upload Video
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const videoInput = document.getElementById("video");
+    const fileName = document.getElementById("selected-video-name");
+
+    if (videoInput && fileName) {
+        videoInput.addEventListener("change", function () {
+            if (this.files && this.files.length > 0) {
+                fileName.textContent = "Selected: " + this.files[0].name;
+            } else {
+                fileName.textContent = "No video selected";
+            }
+        });
+    }
+});
+</script>
+
+{% endblock %}

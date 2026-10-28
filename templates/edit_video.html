@@ -1,0 +1,58 @@
+
+{% extends "base.html" %}
+
+{% block title %}Edit Video | StreamHub{% endblock %}
+
+{% block content %}
+
+<section class="card" style="max-width: 700px; margin: 0 auto;">
+    <h1>Edit Video</h1>
+
+    <p class="muted">
+        Update your video's title and description.
+    </p>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div style="margin-bottom: 20px;">
+            <label for="title" style="display: block; margin-bottom: 8px;">
+                Video Title
+            </label>
+
+            <input
+                type="text"
+                id="title"
+                name="title"
+                value="{{ video.title }}"
+                maxlength="150"
+                required
+                style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;"
+            >
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="description" style="display: block; margin-bottom: 8px;">
+                Description
+            </label>
+
+            <textarea
+                id="description"
+                name="description"
+                rows="6"
+                maxlength="5000"
+                style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;"
+            >{{ video.description or '' }}</textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button type="submit" class="btn">Save Changes</button>
+
+            <a href="{{ url_for('dashboard') }}" class="btn">
+                Cancel
+            </a>
+        </div>
+    </form>
+</section>
+
+{% endblock %}

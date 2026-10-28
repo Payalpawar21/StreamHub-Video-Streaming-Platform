@@ -1,0 +1,78 @@
+
+{% extends "base.html" %}
+
+{% block title %}Login | StreamHub{% endblock %}
+
+{% block content %}
+
+<section class="auth-page">
+
+    <div class="auth-brand">
+        <div class="auth-brand-icon">▶</div>
+        <span>STREAMHUB</span>
+    </div>
+
+    <div class="auth-card">
+
+        <div class="auth-heading">
+            <span class="auth-eyebrow">WELCOME BACK</span>
+            <h1>Sign in to StreamHub</h1>
+            <p>Continue watching and managing your videos.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('login') }}" class="auth-form">
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <div class="auth-field">
+                <label for="email">Email address</label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="auth-field">
+                <label for="password">Password</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="auth-submit-btn">
+                Sign In <span>→</span>
+            </button>
+
+        </form>
+
+        <div class="auth-divider">
+            <span>NEW TO STREAMHUB?</span>
+        </div>
+
+        <p class="auth-footer">
+            Don't have an account?
+            <a href="{{ url_for('register') }}">Create account</a>
+        </p>
+
+    </div>
+
+    <p class="auth-bottom-text">
+        Your videos. Your community. Your StreamHub.
+    </p>
+
+</section>
+
+{% endblock %}
