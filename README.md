@@ -52,7 +52,7 @@ A Flask-based video streaming web application that allows users to register, log
 
 ### 1. Clone the repository
 
-git clone https://github.com/YOUR_USERNAME/StreamHub-Video-Streaming-Platform.git
+git clone  https://github.com/Payalpawar21/StreamHub-Video-Streaming-Platform.git
 
 
 ### 2. Open the project directory
