@@ -28,16 +28,15 @@ A Flask-based video streaming web application that allows users to register, log
 
 ## 📁 Project Structure
 
-1. Video-Streaming-Platform/
+1. Video-Streaming-Platform
 2. app.py
 3. requirements.txt
 4. .gitignore
 5. README.md
-   
-6.static/
-│   1. css/
+6.static
+│   1. css
        1. style.css
-7. templates/
+7. templates
     1. base.html
     2. index.html
     3. login.html
