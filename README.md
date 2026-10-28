@@ -33,6 +33,7 @@ A Flask-based video streaming web application that allows users to register, log
 3. requirements.txt
 4. .gitignore
 5. README.md
+   
 6.static/
 │   1. css/
        1. style.css
